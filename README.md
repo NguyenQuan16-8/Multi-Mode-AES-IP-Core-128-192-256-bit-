@@ -26,8 +26,8 @@ Thông qua bus AXI4-Lite, bạn có thể điều khiển IP bằng các địa 
 
 | Địa chỉ (Hex) | Tên thanh ghi | Mô tả chi tiết |
 | :--- | :--- | :--- |
-| **0x00** | **CTRL** | : Start (Kích hoạt); : Mode (0: Mã hóa, 1: Giải mã). |
-| **0x04** | **STATUS** | : Busy (Đang xử lý); : Done (Xong - Sticky bit). |
+| **0x00** | **CTRL** |  Start (Kích hoạt);  Mode (0: Mã hóa, 1: Giải mã). |
+| **0x04** | **STATUS** |  Busy (Đang xử lý);  Done (Xong - Sticky bit). |
 | **0x08** | **KEYLEN** | Chọn chuẩn khóa: 0=128-bit; 1=192-bit; 2=256-bit. |
 | **0x0C - 0x28** | **KEY0 - KEY7** | Nạp khóa mã hóa (tối đa 256-bit từ KEY0 đến KEY7). |
 | **0x2C - 0x38** | **DIN0 - DIN3** | Nạp dữ liệu đầu vào (Plaintext/Ciphertext - 128-bit). |
