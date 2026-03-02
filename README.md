@@ -69,12 +69,5 @@ Sub-modules:
    * `Done = 1` → Hoàn tất
 6. Đọc kết quả tại `DOUT0 – DOUT3`.
 
----
 
-##  Architecture Overview
-
-* Iterative round-based AES core  
-* Shared datapath cho encryption và decryption  
-* Hardware key expansion engine  
-* AXI register-controlled processing  
 
