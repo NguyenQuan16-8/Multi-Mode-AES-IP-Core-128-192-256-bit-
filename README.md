@@ -1,43 +1,80 @@
-# Multi-Mode AES IP Core (128/192/256-bit) with AXI4-Lite Interface
+#  Multi-Mode AES IP Core (128/192/256-bit) with AXI4-Lite Interface
 
-Dự án triển khai một bộ nhân mã hóa/giải mã **AES (Advanced Encryption Standard)** hoàn chỉnh bằng ngôn ngữ Verilog HDL. Hệ thống được thiết kế dưới dạng một **IP Core** có khả năng cấu hình động, tích hợp giao tiếp chuẩn **AXI4-Lite** để dễ dàng kết nối với các hệ thống SoC và CPU.
+Dự án triển khai bộ mã hóa/giải mã **AES (Advanced Encryption Standard)** hoàn chỉnh bằng **Verilog HDL**.  
+Thiết kế dưới dạng **IP Core cấu hình động**, tích hợp giao tiếp chuẩn **AXI4-Lite**, dễ dàng kết nối với hệ thống SoC hoặc CPU.
+
+---
 
 ##  Key Features
 
-* **Hỗ trợ đa chế độ (Multi-Mode):** Tích hợp cả 3 chuẩn độ dài khóa 128-bit, 192-bit và 256-bit trong cùng một thiết kế.
-* **Chức năng kép (Dual Function):** Cho phép người dùng lựa chọn giữa chế độ Mã hóa (Encryption) hoặc Giải mã (Decryption) thông qua thanh ghi cấu hình.
-* **Giao tiếp AXI4-Lite:** Quản lý cấu hình và truyền nhận dữ liệu thông qua hệ thống thanh ghi 32-bit chuẩn.
-* **Kiến trúc:** Sử dụng cấu trúc lặp (Iterative) giúp cân bằng giữa diện tích phần cứng và hiệu suất xử lý.
-* **Bộ mở rộng khóa tích hợp:** `AES_KEYEXP` tự động tính toán Round Keys cho cả 3 chế độ ngay trên phần cứng dựa trên tham số đầu vào.
+* **Multi-Mode Support:**  
+  Hỗ trợ AES-128, AES-192 và AES-256 trong cùng một thiết kế.
+
+* **Dual Function (Encrypt/Decrypt):**  
+  Lựa chọn chế độ Mã hóa hoặc Giải mã thông qua thanh ghi điều khiển.
+
+* **AXI4-Lite Interface:**  
+  Cấu hình và truyền dữ liệu thông qua hệ thống thanh ghi 32-bit chuẩn.
+
+* **Iterative Architecture:**  
+  Kiến trúc lặp tối ưu giúp cân bằng giữa diện tích phần cứng (Area) và hiệu suất xử lý (Performance).
+
+* **Integrated Key Expansion:**  
+  Module `AES_KEYEXP` tự động tính toán Round Keys cho cả 3 độ dài khóa 128/192/256-bit.
+
+---
 
 ##  Project Structure
 
-* `AES_AXI4LITE_TOP.v`: Module bọc ngoài cùng, thực hiện giải mã địa chỉ AXI và quản lý hệ thống thanh ghi].
-* `AES_ENCRYPT.v` & `AES_DECRYPT.v`: Hai khối thực thi chính xử lý thuật toán mã hóa và giải mã theo từng vòng (Round).
-* `AES_KEYEXP.v`: Bộ mở rộng khóa thông minh cấp phát khóa vòng (Round Keys) linh hoạt cho các độ dài 128/192/256-bit.
-* **Sub-modules:**
-    * `AES_SBOX.v` / `AES_INVSBOX.v`: Các bảng tra thế phi tuyến (SubBytes/InvSubBytes).
-    * `AES_MIXCOL.v` / `AES_INVMIXCOL.v`: Phép nhân ma trận trong trường Galois (MixColumns/InvMixColumns).
-    * `AES_RCON.v` & `mul2.v`: Các thành phần toán học bổ trợ cho quá trình mở rộng khóa và nhân ma trận.
+```
+AES_AXI4LITE_TOP.v   # Top wrapper + AXI address decoding + register control
+AES_ENCRYPT.v        # Encryption core (round-based processing)
+AES_DECRYPT.v        # Decryption core (inverse round processing)
+AES_KEYEXP.v         # Key expansion module (128/192/256-bit)
 
-##  Register Map
+Sub-modules:
+  AES_SBOX.v         # SubBytes lookup table
+  AES_INVSBOX.v      # InvSubBytes lookup table
+  AES_MIXCOL.v       # MixColumns operation
+  AES_INVMIXCOL.v    # InvMixColumns operation
+  AES_RCON.v         # Round constant generator
+  mul2.v             # Galois field multiplication helper
+```
 
-Thông qua bus AXI4-Lite, bạn có thể điều khiển IP bằng các địa chỉ sau:
+---
 
-| Địa chỉ (Hex) | Tên thanh ghi | Mô tả chi tiết |
-| :--- | :--- | :--- |
-| **0x00** | **CTRL** |  Start (Kích hoạt);  Mode (0: Mã hóa, 1: Giải mã). |
-| **0x04** | **STATUS** |  Busy (Đang xử lý);  Done (Xong - Sticky bit). |
-| **0x08** | **KEYLEN** | Chọn chuẩn khóa: 0=128-bit; 1=192-bit; 2=256-bit. |
-| **0x0C - 0x28** | **KEY0 - KEY7** | Nạp khóa mã hóa (tối đa 256-bit từ KEY0 đến KEY7). |
-| **0x2C - 0x38** | **DIN0 - DIN3** | Nạp dữ liệu đầu vào (Plaintext/Ciphertext - 128-bit). |
-| **0x3C - 0x48** | **DOUT0 - DOUT3** | Đọc kết quả đầu ra sau khi xử lý (128-bit). |
+##  Register Map (AXI4-Lite)
 
-## Hướng dẫn sử dụng (Usage)
+| Address | Register | Description |
+|----------|----------|-------------|
+| `0x00` | CTRL | `[0] Start` – Kích hoạt xử lý<br>`[1] Mode` – 0: Encrypt, 1: Decrypt |
+| `0x04` | STATUS | `[0] Busy` – Đang xử lý<br>`[1] Done` – Hoàn tất (Sticky bit) |
+| `0x08` | KEYLEN | 0: 128-bit<br>1: 192-bit<br>2: 256-bit |
+| `0x0C – 0x28` | KEY0 – KEY7 | Nạp khóa (tối đa 256-bit) |
+| `0x2C – 0x38` | DIN0 – DIN3 | Dữ liệu đầu vào 128-bit |
+| `0x3C – 0x48` | DOUT0 – DOUT3 | Dữ liệu đầu ra 128-bit |
 
-### 1. Mô phỏng (Simulation)
-Sử dụng các công cụ như ModelSim, Vivado Simulator để biên dịch toàn bộ file `.v`.
-```bash
-# Lệnh biên dịch mẫu
-vlog *.v
-vsim AES_AXI4LITE_TOP
+---
+
+##  Operation Flow
+
+1. Ghi giá trị vào thanh ghi `KEYLEN`.
+2. Nạp khóa vào `KEY0 – KEY7`.
+3. Nạp dữ liệu vào `DIN0 – DIN3`.
+4. Ghi vào thanh ghi `CTRL`:
+   * Bit `[1]` → Chọn chế độ (Encrypt/Decrypt)
+   * Bit `[0]` → Start
+5. Theo dõi thanh ghi `STATUS`:
+   * `Busy = 1` → Đang xử lý
+   * `Done = 1` → Hoàn tất
+6. Đọc kết quả tại `DOUT0 – DOUT3`.
+
+---
+
+##  Architecture Overview
+
+* Iterative round-based AES core  
+* Shared datapath cho encryption và decryption  
+* Hardware key expansion engine  
+* AXI register-controlled processing  
+
