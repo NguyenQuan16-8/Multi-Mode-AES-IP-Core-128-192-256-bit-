@@ -2,7 +2,7 @@
 
 Dự án triển khai một bộ nhân mã hóa/giải mã **AES (Advanced Encryption Standard)** hoàn chỉnh bằng ngôn ngữ Verilog HDL. Hệ thống được thiết kế dưới dạng một **IP Core** có khả năng cấu hình động, tích hợp giao tiếp chuẩn **AXI4-Lite** để dễ dàng kết nối với các hệ thống SoC và CPU.
 
-##  Các tính năng chính (Key Features)
+##  Key Features
 
 * **Hỗ trợ đa chế độ (Multi-Mode):** Tích hợp cả 3 chuẩn độ dài khóa 128-bit, 192-bit và 256-bit trong cùng một thiết kế.
 * **Chức năng kép (Dual Function):** Cho phép người dùng lựa chọn giữa chế độ Mã hóa (Encryption) hoặc Giải mã (Decryption) thông qua thanh ghi cấu hình.
@@ -10,7 +10,7 @@ Dự án triển khai một bộ nhân mã hóa/giải mã **AES (Advanced Encry
 * **Kiến trúc:** Sử dụng cấu trúc lặp (Iterative) giúp cân bằng giữa diện tích phần cứng và hiệu suất xử lý.
 * **Bộ mở rộng khóa tích hợp:** `AES_KEYEXP` tự động tính toán Round Keys cho cả 3 chế độ ngay trên phần cứng dựa trên tham số đầu vào.
 
-##  Cấu trúc thư mục (Project Structure)
+##  Project Structure
 
 * `AES_AXI4LITE_TOP.v`: Module bọc ngoài cùng, thực hiện giải mã địa chỉ AXI và quản lý hệ thống thanh ghi].
 * `AES_ENCRYPT.v` & `AES_DECRYPT.v`: Hai khối thực thi chính xử lý thuật toán mã hóa và giải mã theo từng vòng (Round).
@@ -20,7 +20,7 @@ Dự án triển khai một bộ nhân mã hóa/giải mã **AES (Advanced Encry
     * `AES_MIXCOL.v` / `AES_INVMIXCOL.v`: Phép nhân ma trận trong trường Galois (MixColumns/InvMixColumns).
     * `AES_RCON.v` & `mul2.v`: Các thành phần toán học bổ trợ cho quá trình mở rộng khóa và nhân ma trận.
 
-##  Bản đồ địa chỉ thanh ghi (Register Map)
+##  Register Map
 
 Thông qua bus AXI4-Lite, bạn có thể điều khiển IP bằng các địa chỉ sau:
 
@@ -33,7 +33,7 @@ Thông qua bus AXI4-Lite, bạn có thể điều khiển IP bằng các địa 
 | **0x2C - 0x38** | **DIN0 - DIN3** | Nạp dữ liệu đầu vào (Plaintext/Ciphertext - 128-bit). |
 | **0x3C - 0x48** | **DOUT0 - DOUT3** | Đọc kết quả đầu ra sau khi xử lý (128-bit). |
 
-## 🛠 Hướng dẫn sử dụng (Usage)
+## Hướng dẫn sử dụng (Usage)
 
 ### 1. Mô phỏng (Simulation)
 Sử dụng các công cụ như ModelSim, Vivado Simulator để biên dịch toàn bộ file `.v`.
