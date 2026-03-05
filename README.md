@@ -3,6 +3,7 @@
 The project implements a complete **AES (Advanced Encryption Standard)** encoder/decoder using **Verilog HDL**.
 
 Designed as a dynamically configurable IP Core, it integrates a standard AXI4-Lite interface, making it easy to connect with SoC systems or CPUs.
+
 ---
 
 ##  Key Features
