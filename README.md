@@ -1,26 +1,25 @@
 #  Multi-Mode AES IP Core (128/192/256-bit) with AXI4-Lite Interface
 
-Dự án triển khai bộ mã hóa/giải mã **AES (Advanced Encryption Standard)** hoàn chỉnh bằng **Verilog HDL**.  
-Thiết kế dưới dạng **IP Core cấu hình động**, tích hợp giao tiếp chuẩn **AXI4-Lite**, dễ dàng kết nối với hệ thống SoC hoặc CPU.
+The project implements a complete **AES (Advanced Encryption Standard)** encoder/decoder using **Verilog HDL**.
 
 ---
 
 ##  Key Features
 
 * **Multi-Mode Support:**  
-  Hỗ trợ AES-128, AES-192 và AES-256 trong cùng một thiết kế.
+  Supports AES-128, AES-192, and AES-256 in the same design.
 
 * **Dual Function (Encrypt/Decrypt):**  
-  Lựa chọn chế độ Mã hóa hoặc Giải mã thông qua thanh ghi điều khiển.
+  Select Encryption or Decryption mode via the control register.
 
 * **AXI4-Lite Interface:**  
-  Cấu hình và truyền dữ liệu thông qua hệ thống thanh ghi 32-bit chuẩn.
+  Configuration and data transfer via a standard 32-bit register system.
 
 * **Iterative Architecture:**  
-  Kiến trúc lặp tối ưu giúp cân bằng giữa diện tích phần cứng (Area) và hiệu suất xử lý (Performance).
+  Optimized iterative architecture balances hardware Area and Performance.
 
 * **Integrated Key Expansion:**  
-  Module `AES_KEYEXP` tự động tính toán Round Keys cho cả 3 độ dài khóa 128/192/256-bit.
+  The `AES_KEYEXP` module automatically calculates Round Keys for all 3 key lengths: 128/192/256-bit.
 
 ---
 
@@ -47,27 +46,27 @@ Sub-modules:
 
 | Address | Register | Description |
 |----------|----------|-------------|
-| `0x00` | CTRL | `[0] Start` – Kích hoạt xử lý<br>`[1] Mode` – 0: Encrypt, 1: Decrypt |
-| `0x04` | STATUS | `[0] Busy` – Đang xử lý<br>`[1] Done` – Hoàn tất (Sticky bit) |
+| `0x00` | CTRL | `[0] Start` – Trigger processing<br>`[1] Mode` – 0: Encrypt, 1: Decrypt |
+| `0x04` | STATUS | `[0] Busy` – Processing<br>`[1] Done` – Finished (Sticky bit) |
 | `0x08` | KEYLEN | 0: 128-bit<br>1: 192-bit<br>2: 256-bit |
-| `0x0C – 0x28` | KEY0 – KEY7 | Nạp khóa (tối đa 256-bit) |
-| `0x2C – 0x38` | DIN0 – DIN3 | Dữ liệu đầu vào 128-bit |
-| `0x3C – 0x48` | DOUT0 – DOUT3 | Dữ liệu đầu ra 128-bit |
+| `0x0C – 0x28` | KEY0 – KEY7 | Key loading (up to 256-bit) |
+| `0x2C – 0x38` | DIN0 – DIN3 | 128-bit Input Data|
+| `0x3C – 0x48` | DOUT0 – DOUT3 | 128-bit Output Data |
 
 ---
 
 ##  Operation Flow
 
-1. Ghi giá trị vào thanh ghi `KEYLEN`.
-2. Nạp khóa vào `KEY0 – KEY7`.
-3. Nạp dữ liệu vào `DIN0 – DIN3`.
-4. Ghi vào thanh ghi `CTRL`:
-   * Bit `[1]` → Chọn chế độ (Encrypt/Decrypt)
+1. Write the value to the `KEYLEN` register.
+2. Load the key into `KEY0 – KEY7`.
+3. Load the input data into `DIN0 – DIN3`.
+4. Write to the `CTRL` register:
+   * Bit `[1]` → Select mode (Encrypt/Decrypt)
    * Bit `[0]` → Start
-5. Theo dõi thanh ghi `STATUS`:
-   * `Busy = 1` → Đang xử lý
-   * `Done = 1` → Hoàn tất
-6. Đọc kết quả tại `DOUT0 – DOUT3`.
+5. Monitor the `STATUS` register:
+   * `Busy = 1` → Processing
+   * `Done = 1` → Finished
+6. Read the result from `DOUT0 – DOUT3`.
 
 
 
